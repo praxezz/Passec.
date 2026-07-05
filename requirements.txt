@@ -1,0 +1,5 @@
+# ---- Required ----
+rich>=13.0.0          # powers the entire terminal UI (menus, panels, tables, progress bars)
+
+# ---- Optional ----
+requests>=2.31.0      # needed for Have I Been Pwned breach checks (Deep Analysis, Batch Audit, Policy Check)
