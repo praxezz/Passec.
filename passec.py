@@ -700,9 +700,9 @@ def render_result(result: AuditResult, password_len: int, mode: str):
     console.print(Panel(header, title="[title] PASSEC RESULT [/]", border_style="border", box=HEAVY))
 
     # Technical details table
-    tech = Table(box=ROUNDED, border_style="border", show_header=False, expand=True)
-    tech.add_column(style="accent2", ratio=1)
-    tech.add_column(ratio=2)
+    tech = Table(box=ROUNDED, border_style="border", show_header=False)
+    tech.add_column(style="accent2")
+    tech.add_column()
     tech.add_row("Password length", f"{password_len} characters")
     tech.add_row("Effective entropy", f"{result.entropy_bits} bits")
     tech.add_row("Weakest link", result.dominant_reason or "none detected")
@@ -728,20 +728,20 @@ def render_result(result: AuditResult, password_len: int, mode: str):
             pt.add_row(p.kind, p.detail)
         console.print(pt)
     else:
-        console.print(Panel("No known weak patterns detected", style="good", border_style="border"))
+        console.print(Panel.fit("No known weak patterns detected", style="good", border_style="border"))
 
     # Breach info (deep mode only)
     if mode == "deep":
         if result.breach_error:
-            console.print(Panel(f"⚠ {result.breach_error}", style="warn", border_style="border"))
+            console.print(Panel.fit(f"⚠ {result.breach_error}", style="warn", border_style="border"))
         elif result.is_breached:
-            console.print(Panel(
+            console.print(Panel.fit(
                 f"🚨 CRITICAL: found in {result.breach_count:,} known data breaches.\n"
                 f"Change this password immediately and check anywhere else it's reused.",
                 style="critical", border_style="bad", title="BREACH ALERT",
             ))
         else:
-            console.print(Panel("✓ Not found in known breach corpus (HIBP)", style="good", border_style="border"))
+            console.print(Panel.fit("✓ Not found in known breach corpus (HIBP)", style="good", border_style="border"))
 
         # Compliance
         comp = Table(title="Policy Compliance", box=ROUNDED, border_style="border", header_style="title")
@@ -759,10 +759,10 @@ def render_result(result: AuditResult, password_len: int, mode: str):
             for check_name, passed in framework["checks"].items():
                 mark = "[good]✓[/]" if passed else "[bad]✗[/]"
                 detail.add_row(mark, check_name)
-            console.print(Panel(detail, title=framework["framework"], border_style="border"))
+            console.print(Panel.fit(detail, title=framework["framework"], border_style="border"))
 
     if result.score < 60:
-        console.print(Panel(
+        console.print(Panel.fit(
             "• Use 16+ characters, ideally a passphrase\n"
             "• Avoid dictionary words, names, dates, and keyboard walks\n"
             "• Never reuse a password found in a breach\n"
@@ -866,7 +866,7 @@ def action_generate_password():
         pw = PasswordGenerator.passphrase(n)
         entropy = PasswordGenerator.passphrase_entropy_bits(n)
 
-    console.print(Panel(
+    console.print(Panel.fit(
         Text(pw, style="bold good", justify="center"),
         title="Generated Credential", border_style="good",
     ))
@@ -895,7 +895,7 @@ def action_policy_check():
         for name, passed in framework["checks"].items():
             mark = "[good]✓[/]" if passed else "[bad]✗[/]"
             detail.add_row(mark, name)
-        console.print(Panel(detail, title=f"{framework['framework']}  —  {status}", border_style="border"))
+        console.print(Panel.fit(detail, title=f"{framework['framework']}  —  {status}", border_style="border"))
 
     if err:
         console.print(f"[warn]Note: {err}[/]")
@@ -911,7 +911,7 @@ def action_help():
     help_table.add_row("4.", "Generate — create a strong random password or diceware-style passphrase.")
     help_table.add_row("5.", "Policy Check — verify a password against NIST 800-63B and PCI-DSS rules.")
     help_table.add_row("h.", "Help — show this screen.")
-    console.print(Panel(
+    console.print(Panel.fit(
         help_table,
         title="[title] PASSEC HELP [/]",
         subtitle="Enter a menu number/letter at the prompt to run that action",
